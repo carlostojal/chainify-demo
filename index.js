@@ -1,4 +1,4 @@
-const { ChainifyNode } = require("../chainify");
+const { ChainifyNode } = require("./chainify");
 const crypto = require("crypto");
 const express = require("express");
 const { privateKey, publicKey} = crypto.generateKeyPairSync("rsa", {
