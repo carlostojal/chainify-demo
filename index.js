@@ -8,9 +8,13 @@ const { privateKey, publicKey} = crypto.generateKeyPairSync("rsa", {
 const app = express();
 app.use(express.json());
 
-const node1 = new ChainifyNode({
+const node = new ChainifyNode({
 	host: "127.0.0.1",
 	port: 1234,
+	alwaysActiveNodes: [{
+		address: process.env.ACTIVE_NODE_ADDRESS,
+		port: process.env.ACTIVE_NODE_PORT
+	}],
 	networkAuthentication: {
 		name: "chainify_test_network",
 		secret: "mysupersecret"
@@ -21,59 +25,27 @@ const node1 = new ChainifyNode({
 	}
 });
 
-node1.init();
+node.init();
 
-const node2 = new ChainifyNode({
-	host: "127.0.0.1",
-	port: 1235,
-	alwaysActiveNodes: [{
-		address: "127.0.0.1",
-		port: 1234
-	}],
-	networkAuthentication: {
-		name: "chainify_test_network", // this must be unique
-		secret: "mysupersecret"
-	},
-	rsaKeyPair: {
-		public: publicKey,
-		private: privateKey
-	}
+node.onListening((config) => {
+	console.log("Node configuration: ");
+	console.log(config);
 });
 
-node2.init();
-
-node1.onListening(() => {
-	// console.log("node1 listening");
-})
-
-node2.onListening(() => {
-	// console.log("node2 listening");
-});
-
-node1.onCall((call) => {
-	console.log("RECEIVED BY NODE1");
+node.onCall((call) => {
 	console.log(call);
 });
 
-node2.onCall((call) => {
-	console.log("RECEIVED BY NODE2");
-	console.log(call);
-});
-
-// node.getItem("test");
-
-// console.log(node1);
-// console.log(node2);
 
 app.get("/users", (req, res) => {
-	node1.getItem("users", (users) => {
+	node.getItem("users", (users) => {
 		res.send(JSON.parse(users));
 	});
 });
 
 app.post("/users", (req, res) => {
 	try {
-		node1.setItem("users", JSON.stringify(req.body));
+		node.setItem("users", JSON.stringify(req.body));
 		return res.send("OK");
 	} catch(e) {
 		return res.send(JSON.stringify(e));
