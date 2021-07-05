@@ -2,27 +2,27 @@ version: '3'
 
 services:
   node1:
-    image: chainify-demo
+    command: node index.js
+    build: .
     ports:
       - 1234:1234/udp
       - 3000:3000/tcp
     environment:
-      ACTIVE_NODE_ADDRESS: 127.0.0.1
-      ACTIVE_NODE_PORT: 1235
-    networks:
-      - chainify-demo-network
+      IP_ADDRESS: 172.20.0.3
+      ACTIVE_NODE_ADDRESS: 172.20.0.2
+      ACTIVE_NODE_PORT: 1234
+    volumes:
+      - ./:/usr/src/app
 
   node2:
-    image: chainify-demo
+    command: node index.js
+    build: .
     ports:
       - 1235:1234/udp
       - 3001:3000/tcp
     environment: 
-      ACTIVE_NODE_ADDRESS: 127.0.0.1
+      IP_ADDRESS: 172.20.0.2
+      ACTIVE_NODE_ADDRESS: 172.20.0.3
       ACTIVE_NODE_PORT: 1234
-    networks:
-      - chainify-demo-network
-
-networks:
-  chainify-demo-network:
-    driver: bridge
+    volumes:
+      - ./:/usr/src/app

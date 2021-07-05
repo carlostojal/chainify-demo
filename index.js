@@ -9,7 +9,7 @@ const app = express();
 app.use(express.json());
 
 const node = new ChainifyNode({
-	host: "127.0.0.1",
+	host: process.env.IP_ADDRESS,
 	port: 1234,
 	alwaysActiveNodes: [{
 		address: process.env.ACTIVE_NODE_ADDRESS,
@@ -30,6 +30,7 @@ node.init();
 node.onListening((config) => {
 	console.log("Node configuration: ");
 	console.log(config);
+	console.log("--------------------------");
 });
 
 node.onCall((call) => {
