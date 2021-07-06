@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@carlostojal/chainify": "^1.0.7",
+    "@carlostojal/chainify": "^1.0.8",
     "express": "^4.17.1"
   }
 }
