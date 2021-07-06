@@ -1,28 +1,55 @@
-version: '3'
+version: '2'
 
 services:
   node1:
-    command: node index.js
     build: .
     ports:
       - 1234:1234/udp
       - 3000:3000/tcp
     environment:
-      IP_ADDRESS: 172.20.0.3
-      ACTIVE_NODE_ADDRESS: 172.20.0.2
+      IP_ADDRESS: 172.18.0.2
+      ACTIVE_NODE_ADDRESS: 172.18.0.3
       ACTIVE_NODE_PORT: 1234
     volumes:
       - ./:/usr/src/app
+    networks: 
+      chainify_network:
+        ipv4_address: 172.18.0.2
 
   node2:
-    command: node index.js
     build: .
     ports:
       - 1235:1234/udp
       - 3001:3000/tcp
     environment: 
-      IP_ADDRESS: 172.20.0.2
-      ACTIVE_NODE_ADDRESS: 172.20.0.3
+      IP_ADDRESS: 172.18.0.3
+      ACTIVE_NODE_ADDRESS: 172.18.0.2
       ACTIVE_NODE_PORT: 1234
     volumes:
       - ./:/usr/src/app
+    networks: 
+      chainify_network:
+        ipv4_address: 172.18.0.3
+  
+  node3:
+    build: .
+    ports:
+      - 1236:1234/udp
+      - 3002:3000/tcp
+    environment: 
+      IP_ADDRESS: 172.18.0.4
+      ACTIVE_NODE_ADDRESS: 172.18.0.3
+      ACTIVE_NODE_PORT: 1234
+    volumes:
+      - ./:/usr/src/app
+    networks:
+      chainify_network:
+        ipv4_address: 172.18.0.4
+
+networks:
+  chainify_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.18.0.0/16
+          gateway: 172.18.0.1

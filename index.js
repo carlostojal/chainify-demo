@@ -1,4 +1,4 @@
-const { ChainifyNode } = require("@carlostojal/chainify");
+const { ChainifyNode } = require("./chainify");
 const crypto = require("crypto");
 const express = require("express");
 const { privateKey, publicKey} = crypto.generateKeyPairSync("rsa", {
@@ -13,7 +13,8 @@ const node = new ChainifyNode({
 	port: 1234,
 	alwaysActiveNodes: [{
 		address: process.env.ACTIVE_NODE_ADDRESS,
-		port: process.env.ACTIVE_NODE_PORT
+		port: process.env.ACTIVE_NODE_PORT,
+		authenticated: true
 	}],
 	networkAuthentication: {
 		name: "chainify_test_network",
@@ -33,7 +34,13 @@ node.onListening((config) => {
 	console.log("--------------------------");
 });
 
-node.onCall((call) => {
+node.onCall((call, node) => {
+	console.log("CALL RECEIVED FROM " + JSON.stringify(node));
+	console.log(call);
+});
+
+node.onCallSend((call, node) => {
+	console.log("CALL SENT TO " + JSON.stringify(node));
 	console.log(call);
 });
 
